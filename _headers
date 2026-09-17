@@ -1,0 +1,5 @@
+/*
+  Referrer policy for embedded media such as YouTube.
+  This sends an origin-level Referer on cross-origin requests.
+*/
+  Referrer-Policy: strict-origin-when-cross-origin
