@@ -836,6 +836,13 @@
         .drive-video-thumb img[src*="trip-"], .drive-video-thumb img[src*="her-birthday-"], .drive-video-thumb img[src*="wedding-"] { image-rendering:auto; }
         #wish-input, #wish-name-input { -webkit-user-select:text; user-select:text; -webkit-touch-callout:default; }
                 /* --- DRIVE VIDEO UI --- */
+        /* Engagement / Wedding / Reception / Tanguar Haor Trip stacked in one
+           scrollable Act instead of four separate Acts. */
+        .curated-video-groups { display:flex; flex-direction:column; gap:26px; width:100%; }
+        .curated-video-group { width:100%; }
+        .curated-video-group + .curated-video-group { padding-top:24px; border-top:1px dashed rgba(0,0,0,0.12); }
+        .curated-video-group-title { font-family:'Cinzel', serif; font-size:1rem; font-weight:700; letter-spacing:0.6px; margin:0 0 6px; color:inherit; }
+        .curated-video-group-desc { font-family:'Transcity', Georgia, serif; opacity:0.85; margin:0 0 4px; }
         .video-button-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px; margin-top:16px; }
         .drive-video-btn { position:relative; width:100%; min-height:0; border:1px solid rgba(255,255,255,.80); border-radius:22px; padding:0; overflow:hidden; cursor:pointer; color:#fff; background:#101015; box-shadow:0 16px 38px rgba(0,0,0,.13); text-align:left; font:700 .86rem/1.2 'Montserrat',sans-serif; transition:transform .24s ease,box-shadow .24s ease; isolation:isolate; }
         .drive-video-btn:hover { transform:translateY(-4px); box-shadow:0 22px 46px rgba(0,0,0,.18); }
@@ -870,12 +877,9 @@
         .drive-video-shell { position:relative;width:min(1280px,96vw);max-height:calc(100dvh - 24px);border-radius:24px;overflow:hidden;background:#050505;border:1px solid rgba(255,255,255,.18);box-shadow:0 35px 100px rgba(0,0,0,.52); }
         .drive-video-modal:fullscreen .drive-video-shell,.drive-video-modal:-webkit-full-screen .drive-video-shell { width:100vw;height:100dvh;max-height:none;border-radius:0;border:0; }
         .drive-video-modal:fullscreen .drive-video-frame-wrap,.drive-video-modal:-webkit-full-screen .drive-video-frame-wrap{height:100dvh;max-height:none;border-radius:0;}
-        .drive-video-header { position:absolute;top:10px;left:14px;right:14px;z-index:4;display:flex;align-items:center;justify-content:flex-start;pointer-events:none; }
+        .drive-video-header { position:absolute;top:10px;left:14px;right:14px;z-index:4;display:flex;align-items:center;justify-content:space-between;pointer-events:none; }
         .drive-video-title { color:#fff;font:700 .8rem 'Montserrat',sans-serif;letter-spacing:.4px;text-shadow:0 2px 12px rgba(0,0,0,.65);max-width:75%; }
-        /* Centered independently of the title row (top-center) so it never lands on top of
-           Google Drive's or YouTube's own corner controls, which both platforms keep to
-           the top-left (title) or top-right/bottom-right of their embedded players. */
-        .drive-video-close { position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:5;pointer-events:auto;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.45);color:#fff;cursor:pointer;font-size:1.35rem;backdrop-filter:blur(10px); }
+        .drive-video-close { pointer-events:auto;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.45);color:#fff;cursor:pointer;font-size:1.35rem;backdrop-filter:blur(10px); }
         .drive-video-frame-wrap { position:relative;width:100%;height:min(56.25vw,calc(100dvh - 120px),720px);min-height:220px;max-height:720px;background:#000;border-radius:24px;overflow:hidden; }
         .drive-video-frame-wrap iframe { min-width:100%;min-height:100%; }
         @media (max-width:680px){
@@ -1433,6 +1437,19 @@
         }
         #wish-warning.show { display: block; }
 
+        /* Blinking red-border alert used to point out an unselected field
+           (font style / sticky colour / text colour) when Post is clicked. */
+        .wish-field-alert {
+            border-radius: 16px;
+            outline: 3px solid rgba(220, 38, 38, 0.9);
+            outline-offset: 5px;
+            animation: wishFieldAlertBlink 0.7s ease-in-out 5;
+        }
+        @keyframes wishFieldAlertBlink {
+            0%, 100% { outline-color: rgba(220, 38, 38, 0.15); box-shadow: 0 0 0 rgba(220, 38, 38, 0); }
+            50% { outline-color: rgba(220, 38, 38, 0.95); box-shadow: 0 0 16px rgba(220, 38, 38, 0.55); }
+        }
+
         #approval-msg {
             display: none;
             background: rgba(255, 255, 255, 0.6);
@@ -1625,8 +1642,7 @@
     <!-- GENERIC GOOGLE DRIVE VIDEO MODAL -->
     <div id="drive-video-modal" class="drive-video-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video player">
         <div class="drive-video-shell" id="drive-video-shell">
-            <div class="drive-video-header"><div id="drive-video-title" class="drive-video-title">Video</div></div>
-            <button type="button" class="drive-video-close" id="drive-video-close" aria-label="Close video">&times;</button>
+            <div class="drive-video-header"><div id="drive-video-title" class="drive-video-title">Video</div><button type="button" class="drive-video-close" id="drive-video-close" aria-label="Close video">&times;</button></div>
             <div class="drive-video-frame-wrap">
                 <div id="drive-video-loader" class="drive-video-loader" aria-live="polite"><div class="cinematic-loader" aria-hidden="true"><span class="cinematic-loader-core"></span></div><div class="drive-video-loader-label">Loading Video...</div><div class="drive-video-loader-note">The video is taking a little longer to initialize.</div></div>
                 <iframe id="drive-video-frame" class="drive-video-frame" src="about:blank" title="Video player" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
@@ -1798,7 +1814,7 @@
 
                                 <!-- 3. FONT PICKER: English and Bangla side by side.
                                      The font family must match the language of the wish (enforced in JS). -->
-                                <div class="font-section">
+                                <div class="font-section" id="wish-font-section">
                                     <div class="font-panels">
                                         <div class="font-card" id="font-card-en" data-lang="en">
                                             <div class="font-card-head">
@@ -1839,11 +1855,11 @@
 
                                 <!-- 4. COLOURS -->
                                 <div class="style-section">
-                                    <div class="style-col">
+                                    <div class="style-col" id="wish-sticky-color-section">
                                         <div class="c-label">🎨 Colors</div>
                                         <div class="color-grid" id="all-colors-grid"></div>
                                     </div>
-                                    <div class="style-col style-col-text">
+                                    <div class="style-col style-col-text" id="wish-text-color-section">
                                         <div class="c-label">Text Color</div>
                                         <div class="toggle-group">
                                             <button type="button" class="opt-btn txt-btn" data-color="#1e1e2a">Black</button>
@@ -1921,14 +1937,11 @@
         const pagesData = [
             { act: "Act I", title: "Act I: The Exposition (2017 - First Meeting)", desc: "\"Where the first word of our untold poem was written.\"", bg: "#E8F5E9", color: "#14532D", html: `<div class="first-meeting-photo-wrap"><img class="first-meeting-photo" src="assets/first-meeting/1.jpg" alt="Our first meeting" onclick="openFirstMeetingPhoto()"></div>` },
             { act: "Act II", title: "ACT II: CHRONICLES OF PASSING VERSES", desc: "", bg: "#F3E8FF", color: "#581C87", dynamicKey: "act2", html: `<div class="ten-year-gallery" id="ten-year-gallery"></div>` },
-            { act: "Act III", title: "Act III: The Solstice of Promises (Engagement Day)", desc: "Beautiful moments of exchanging rings and promises.", bg: "#FFE4E6", color: "#881337", html: `<div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1V-VqbfZ1MVJ-h_Gl2GukMTmfGat29XIN/preview" data-video-title="Engagement"><span class="play-dot">▶</span><span>Engagement</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1V-VqbfZ1MVJ-h_Gl2GukMTmfGat29XIN/preview" data-video-title="Engagement" aria-label="Play Engagement">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div>` },
-            { act: "Act IV", title: "Act IV: The Nuptial Symphony (Wedding Day - 27 Sep 2024)", desc: "Sacred moments of our marriage presented in cinematic acts.", bg: "#DCFCE7", color: "#14532D", html: `<div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1ucJghCv0LZg8IH5Hd4yftFNXrcZE5AOJ/preview" data-video-title="Wedding"><span class="play-dot">▶</span><span>Wedding</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1ucJghCv0LZg8IH5Hd4yftFNXrcZE5AOJ/preview" data-video-title="Wedding" aria-label="Play Wedding">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div>` },
-            { act: "Act V", title: "Act V: The Royal Feast (Reception)", desc: "Capturing the celebratory feast and delightful reception moments.", bg: "#DCEEFE", color: "#0C4A6E", html: `<div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1Mx--Pi7m_4f568-GLC98TC_b0K7KZBNy/preview" data-video-title="Reception"><span class="play-dot">▶</span><span>Reception</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1Mx--Pi7m_4f568-GLC98TC_b0K7KZBNy/preview" data-video-title="Reception" aria-label="Play Reception">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div>` },
-            { act: "Act VI", title: "Act VI: The Azure Waters (Tanguar Haor Trip)", desc: "Cinematic vacation reels and photos amidst the serene blue waters.", bg: "#EDE9FE", color: "#581C87", html: `<div class="video-button-list"><button class="drive-video-btn" data-video-url="https://youtu.be/-dyzdU7jNL0" data-video-title="Tanguar Haor Trip"><span class="play-dot">▶</span><span>Tanguar Haor Trip</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://youtu.be/-dyzdU7jNL0" data-video-title="Tanguar Haor Trip" aria-label="Play Tanguar Haor Trip">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div>` },
-            { act: "Act VII", title: "Act VII: Of Two Wheels and Wind (Bike Purchase)", desc: "Memories of buying our new ride together.", bg: "#E8F5E9", color: "#14532D", dynamicKey: "bike", html: `<div class="photo-gallery" data-gallery-name="Act VII — Bike Purchase" data-gallery-key="bike"></div>` },
-            { act: "Act VIII", title: "Act VIII: A Full Circle of Sunsets (1st Anniversary)", desc: "A canvas grid of magical moments from our first wedding anniversary.", bg: "#E0F2FE", color: "#0C4A6E", dynamicKey: "anniversary", html: `<div class="photo-gallery" data-gallery-name="Act VIII — 1st Anniversary" data-gallery-key="anniversary"></div>` },
-            { act: "Act IX", title: "Act IX: The Wandering Verses (Random Trips)", desc: "Spontaneous getaways and travel compilation reels. New videos appear automatically after a page refresh.", bg: "#F3E8FF", color: "#581C87", html: `<div id="random-trips-video-list" class="video-button-list"><div class="random-trip-loading">Loading Random Trips…</div></div>` },
-            { act: "Act X", title: "Act X: The Natal Anthologies (Birthday Calendar)", desc: "Birthday memories arranged year by year — with photos and inline video playback where available.", bg: "#FFE4E6", color: "#881337", html: `<div id="birthday-calendar" class="birthday-calendar"></div>` }
+            { act: "Act III", title: "Act III: The Sacred Chapters (Engagement, Wedding, Reception & Tanguar Haor Trip)", desc: "From the promise of engagement to our wedding vows, the reception feast, and our getaway to Tanguar Haor — scroll down to relive it all, in order.", bg: "#FFE4E6", color: "#881337", html: `<div class="curated-video-groups"><div class="curated-video-group"><h4 class="curated-video-group-title">💍 The Solstice of Promises — Engagement Day</h4><p class="curated-video-group-desc">Beautiful moments of exchanging rings and promises.</p><div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1V-VqbfZ1MVJ-h_Gl2GukMTmfGat29XIN/preview" data-video-title="Engagement"><span class="play-dot">▶</span><span>Engagement</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1V-VqbfZ1MVJ-h_Gl2GukMTmfGat29XIN/preview" data-video-title="Engagement" aria-label="Play Engagement">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div></div><div class="curated-video-group"><h4 class="curated-video-group-title">💐 The Nuptial Symphony — Wedding Day (27 Sep 2024)</h4><p class="curated-video-group-desc">Sacred moments of our marriage presented in cinematic acts.</p><div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1ucJghCv0LZg8IH5Hd4yftFNXrcZE5AOJ/preview" data-video-title="Wedding"><span class="play-dot">▶</span><span>Wedding</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1ucJghCv0LZg8IH5Hd4yftFNXrcZE5AOJ/preview" data-video-title="Wedding" aria-label="Play Wedding">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div></div><div class="curated-video-group"><h4 class="curated-video-group-title">🍽️ The Royal Feast — Reception</h4><p class="curated-video-group-desc">Capturing the celebratory feast and delightful reception moments.</p><div class="video-button-list"><button class="drive-video-btn" data-video-url="https://drive.google.com/file/d/1Mx--Pi7m_4f568-GLC98TC_b0K7KZBNy/preview" data-video-title="Reception"><span class="play-dot">▶</span><span>Reception</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://drive.google.com/file/d/1Mx--Pi7m_4f568-GLC98TC_b0K7KZBNy/preview" data-video-title="Reception" aria-label="Play Reception">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div></div><div class="curated-video-group"><h4 class="curated-video-group-title">🌊 The Azure Waters — Tanguar Haor Trip</h4><p class="curated-video-group-desc">Cinematic vacation reels and photos amidst the serene blue waters.</p><div class="video-button-list"><button class="drive-video-btn" data-video-url="https://youtu.be/-dyzdU7jNL0" data-video-title="Tanguar Haor Trip"><span class="play-dot">▶</span><span>Tanguar Haor Trip</span></button></div><p class="video-tap-hint">Click anywhere on the thumbnail to play the video</p><div class="video-tap-mobile-cta"><button type="button" class="video-tap-play-btn" data-video-url="https://youtu.be/-dyzdU7jNL0" data-video-title="Tanguar Haor Trip" aria-label="Play Tanguar Haor Trip">▶</button><p class="video-tap-hint-mobile">Click this play button to play the video</p></div></div></div>` },
+            { act: "Act IV", title: "Act IV: Of Two Wheels and Wind (Bike Purchase)", desc: "Memories of buying our new ride together.", bg: "#E8F5E9", color: "#14532D", dynamicKey: "bike", html: `<div class="photo-gallery" data-gallery-name="Act IV — Bike Purchase" data-gallery-key="bike"></div>` },
+            { act: "Act V", title: "Act V: A Full Circle of Sunsets (1st Anniversary)", desc: "A canvas grid of magical moments from our first wedding anniversary.", bg: "#E0F2FE", color: "#0C4A6E", dynamicKey: "anniversary", html: `<div class="photo-gallery" data-gallery-name="Act V — 1st Anniversary" data-gallery-key="anniversary"></div>` },
+            { act: "Act VI", title: "Act VI: The Wandering Verses (Random Trips)", desc: "Spontaneous getaways and travel compilation reels. New videos appear automatically after a page refresh.", bg: "#F3E8FF", color: "#581C87", html: `<div id="random-trips-video-list" class="video-button-list"><div class="random-trip-loading">Loading Random Trips…</div></div>` },
+            { act: "Act VII", title: "Act VII: The Natal Anthologies (Birthday Calendar)", desc: "Birthday memories arranged year by year — with photos and inline video playback where available.", bg: "#FFE4E6", color: "#881337", html: `<div id="birthday-calendar" class="birthday-calendar"></div>` }
         ];
 
         // ============================================================
@@ -2618,8 +2631,21 @@
         // of the modal's hide function directly, so a manual close and a
         // Back-button close behave identically and never leave a stray
         // history entry behind for the next Back press to land on.
+        //
+        // The modal is closed IMMEDIATELY (synchronously) on this same click,
+        // instead of only closing once the browser's async "back" navigation
+        // round-trips back to us via popstate. Previously the close relied
+        // entirely on that round-trip, which on some desktop browsers doesn't
+        // fire in time — making the first click appear to do nothing and a
+        // second click was needed (which then also looked like it "jumped"
+        // because two history entries had built up). We still pop the extra
+        // history entry in the background so the Back button keeps working
+        // correctly; modalCloseFn is cleared first so the popstate handler
+        // doesn't try to close the (already-closed) modal a second time.
         function requestModalClose(closer) {
             if (history.state && history.state.modal) {
+                modalCloseFn = null;
+                closer();
                 history.back();
             } else {
                 closer();
@@ -2646,7 +2672,9 @@
         history.replaceState({ page: 0, modal: false }, '', location.href);
 
         function handleNextAction() {
-            if (currentPage === 11 && !isLetterSealed) {
+            // The Love Letter page is always second-to-last (Wishes is last),
+            // regardless of how many Acts are in pagesData above.
+            if (currentPage === pages.length - 2 && !isLetterSealed) {
                 showEnvelopeWarning();
                 return;
             }
@@ -2674,7 +2702,7 @@
             if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
             if (e.key === 'ArrowRight') handleNextAction();
             if (e.key === 'ArrowLeft') handlePrevAction();
-            if (e.key === 'Enter' && currentPage === 11) {
+            if (e.key === 'Enter' && currentPage === pages.length - 2) {
                 const wrapper = document.getElementById('envelope-wrapper');
                 if (wrapper.classList.contains('open')) closeEnvelope();
                 else {
@@ -3318,6 +3346,22 @@
             warningEl.classList.add('show');
         }
 
+        // Scrolls to (and optionally) blinks a red border around a not-yet-selected
+        // field (font style / sticky colour / text colour) so the visitor can see
+        // exactly what still needs to be picked before posting.
+        function flashMissingWishField(id, opts) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (opts && opts.scroll) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            el.classList.remove('wish-field-alert');
+            void el.offsetWidth; // restart the blink animation even if it's already running
+            el.classList.add('wish-field-alert');
+            clearTimeout(el._wishAlertTimer);
+            el._wishAlertTimer = setTimeout(() => el.classList.remove('wish-field-alert'), 3600);
+        }
+
         // Each sticky gets a font of the SAME language as its text (Bangla text -> Bangla font, English -> English).
         // Fonts are kept unique where possible; when a language pool runs out it simply cycles.
         function ensureUniqueStickyFonts(stickies) {
@@ -3445,9 +3489,16 @@
                 return;
             }
             
-            // Check if all 3 parameters are selected
+            // Check if all 3 parameters are selected. Whichever is missing gets
+            // auto-scrolled into view with a blinking red border so the visitor
+            // immediately sees what still needs to be picked.
             if (!activeBg || !activeColor || !activeFont) {
                 showWishWarning('⚠️ Please select a sticky colour, text colour, and font style to post.');
+                const missingFieldIds = [];
+                if (!activeFont) missingFieldIds.push('wish-font-section');
+                if (!activeBg) missingFieldIds.push('wish-sticky-color-section');
+                if (!activeColor) missingFieldIds.push('wish-text-color-section');
+                missingFieldIds.forEach((id, i) => flashMissingWishField(id, { scroll: i === 0 }));
                 return;
             }
 
@@ -3457,6 +3508,7 @@
                 showWishWarning(wishLang === 'bn'
                     ? '⚠️ Your wish is in Bangla — please choose a বাংলা font.'
                     : '⚠️ Your wish is in English — please choose an English font.');
+                flashMissingWishField('wish-font-section', { scroll: true });
                 return;
             }
 
